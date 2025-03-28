@@ -96,3 +96,36 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## API
+
+# POST
+teacher ni qo'shadi 
+http://localhost:3000/api/teacher/add
+
+# PUT
+teacher ni malumotlarnini yangilaydi 
+eslatma [_id] orniga teacher ni database dagi id bo'lishi kerak
+agar [_id] noto'g'ri berilsa ("Not found !!") qaytaradi
+http://localhost:3000/api/teacher/edit/_id
+
+# DELETE
+teacher ni o'chiradi 
+eslatma [_id] noto'g'ri bo'lsa "NOT found !!" qaytaradi
+http://localhost:3000/api/teacher/delete/_id
+
+# GET
+teacher larni umumiy list(array) ko'rinishida qaytaradi
+[_page] ga bu pagenation raqami beriladi [1, 2, 3, 4, ....]
+[_much] ga qaytaruchu list(array) uzunligini belgilaysiz
+http://localhost:3000/api/teacher/all/_page/_much
+
+# GET
+teacher ni email orqali izlash 
+"Jamshid@gmail.com" ni orniga izlash kerak bo'lgan emailni beriladi
+http://localhost:3000/api/teacher/findoneemail/Jamshid@gmail.com
+
+# GET
+teacher ni [id] bilan izlash 
+"67e67759616d3e6081791425" o'rniga kerakli idni berish kerak
+http://localhost:3000/api/teacher/findone/67e67759616d3e6081791425
