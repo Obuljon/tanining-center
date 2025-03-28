@@ -1,0 +1,29 @@
+services:
+  http-api-gateway:
+    build: 
+      context: ./http-api-gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./http-api-gateway:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3000
+  training-center-teacher:
+    build: ./training-center-teacher
+    environment:
+      - NATS_SERVER=nats://nats:4222
+    volumes:
+      - ./training-center-teacher:/usr/src/app/src
+    command: npm run start:dev
+  training-center-student:
+    build: ./training-center-student
+    environment:
+      - NATS_SERVER=nats://nats:4222
+    command: npm run start:dev
+    volumes:
+      - ./training-center-student:/usr/src/app/src
+  nats:
+    image: nats
+    ports:
+      - "4222:4222"
