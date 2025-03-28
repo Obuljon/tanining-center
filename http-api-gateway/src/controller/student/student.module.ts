@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MainCrudController } from './controller/main_crud.controller';
-import { NatsClientModule } from 'src/nats-client/nats-client.module';
+import { NatsClientModule } from '../../nats-client/nats-client.module';
 import { NatsService } from '../../nats-client/nats.service';
 
 @Module({

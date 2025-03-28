@@ -89,13 +89,19 @@ export class MainCrudController {
     const data = await this.teacherService.findOneEmail(_email);
 
     if (!data)
-      throw new RpcException({ statusCode: 404, message: 'Not fount !!' });
+      throw new RpcException({ statusCode: 404, message: 'Not found !!' });
 
-    return data
+    return data;
   }
 
   //////////////////////////////////////////////////////////////////////
 
+  @MessagePattern('delete-teacher')
+  async deletebyID(@Payload() { _id }) {
+    const data = await this.teacherService.findbyId(_id);
+    if (!data)
+      throw new RpcException({ statusCode: 404, message: 'Not found !!' });
 
-
+    return await this.teacherService.deletabyID(_id);
+  }
 }
