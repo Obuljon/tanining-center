@@ -5,7 +5,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://192.168.1.102:27017/teacher'),
+    MongooseModule.forRoot("mongodb://root:training-center@mongodb:27017", {
+      authSource: 'admin',
+    }),
     NatsClientModule,
     MainModule,
   ],

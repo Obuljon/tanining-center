@@ -1,6 +1,6 @@
 services:
   http-api-gateway:
-    build: 
+    build:
       context: ./http-api-gateway
     ports:
       - "3000:3000"
@@ -9,10 +9,12 @@ services:
     command: npm run start:dev
     environment:
       - PORT=3000
+      - MONGO_URI=mongodb://root:training-center@mongodb:27017
   training-center-teacher:
     build: ./training-center-teacher
     environment:
       - NATS_SERVER=nats://nats:4222
+      - MONGO_URI=mongodb://root:training-center@mongodb:27017
     volumes:
       - ./training-center-teacher:/usr/src/app/src
     command: npm run start:dev
@@ -20,10 +22,40 @@ services:
     build: ./training-center-student
     environment:
       - NATS_SERVER=nats://nats:4222
+      - MONGO_URI=mongodb://root:training-center@mongodb:27017
     command: npm run start:dev
     volumes:
       - ./training-center-student:/usr/src/app/src
+  training-center-course:
+    build: ./training-center-course
+    environment:
+      - NATS_SERVER=nats://nats:4222
+      - MONGO_URI=mongodb://root:training-center@mongodb:27017
+    command: npm run start:dev
+    volumes:
+      - ./training-center-course:/usr/src/app/src
+  training-center-uploads:
+    build: ./training-center-uploads
+    environment:
+      - NATS_SERVER=nats://nats:4222
+      - MONGO_URI=mongodb://root:training-center@mongodb:27017
+    command: npm run start:dev
+    volumes:
+      - ./training-center-uploads:/usr/src/app/src
   nats:
     image: nats
     ports:
       - "4222:4222"
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: training-center
+    # command: ["mongod", "--logLevel", "0"]
+volumes:
+  mongodb_data:

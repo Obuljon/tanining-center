@@ -10,7 +10,7 @@ import {
 import { ClientProxy } from '@nestjs/microservices';
 import { NatsService } from '../../../nats-client/nats.service';
 
-@Controller('main-crud')
+@Controller('api/student')
 export class MainCrudController {
   constructor(
     @Inject('NATS_SERVICE') private natsClient: ClientProxy,

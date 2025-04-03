@@ -129,3 +129,11 @@ http://localhost:3000/api/teacher/findoneemail/Jamshid@gmail.com
 teacher ni [id] bilan izlash 
 "67e67759616d3e6081791425" o'rniga kerakli idni berish kerak
 http://localhost:3000/api/teacher/findone/67e67759616d3e6081791425
+
+# GET
+"pdf" file ni so'rash uchun 
+http://localhost:3000/api/file/readfile/_filename_.pdf
+
+# GET 
+suratni so'rash uchun
+http://localhost:3000/api/file/readphoto/imagename.png/width/height

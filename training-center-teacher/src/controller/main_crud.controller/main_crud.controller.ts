@@ -10,16 +10,22 @@ import {
   UseFilters,
 } from '@nestjs/common';
 import { NatsClientModule } from '../../nats-client/nats-client.module';
-import { MessagePattern, Payload, RpcException } from '@nestjs/microservices';
+import {
+  ClientProxy,
+  MessagePattern,
+  Payload,
+  RpcException,
+} from '@nestjs/microservices';
 import { ExceptionFilter } from '../../nats-client';
 import { MainCrudServiceService } from '../main_crud.service/main_crud.service.service';
+
 @UseFilters(new ExceptionFilter())
 @Controller()
 export class MainCrudController {
   constructor(
-    @Inject('NATS_SERVICE') private natsClient: NatsClientModule,
+    @Inject('NATS_SERVICE') private natsClient: ClientProxy,
     private teacherService: MainCrudServiceService,
-  ) {}
+  ) { }
 
   ///////////////////////
 
@@ -27,21 +33,59 @@ export class MainCrudController {
   async add(@Payload() body: any) {
     const { email } = body;
     const isThere = await this.teacherService.findOneEmail(email);
-    if (isThere)
+    if (isThere) {
       throw new RpcException({
         statusCode: 401,
         message: 'This email is available in the database.',
       });
+    }
 
     const adddata = await this.teacherService.add(body);
-    if (adddata === null)
+    if (adddata === null) {
       throw new RpcException({
         statusCode: 400,
         message: 'Error in teacher microservice',
         error: 'BAD_REQUEST',
       });
-    else {
+    } else {
       return adddata;
+    }
+  }
+
+  ////////////////////////////////////////
+
+  @MessagePattern('edit-photo-teacher')
+  async editphoto(@Payload() data: any) {
+    const { _id, photo, fileData } = data;
+
+    const isThere = await this.teacherService.findbyId(_id);
+    if (!isThere) {
+      throw new RpcException({ statusCode: 404, message: 'Not found !!' });
+    } else {
+      return this.teacherService.editphoto(_id, {
+        ...fileData,
+        oldfilename: isThere.photo,
+      });
+    }
+  }
+
+  // ////////////////////////////////////////
+
+  @MessagePattern('edit-resume-teacher')
+  async editresume(data: { _id: string, fileData: object }) {
+    const { _id, fileData } = data;
+    const isThere = await this.teacherService.findbyId(_id);
+    if (!isThere) {
+      return new RpcException({
+        statusCode: 404,
+        message: 'Not found !!![edit-resume-teacher] ',
+      });
+    } else {
+      return  this.teacherService.editresume(_id, {
+        ...fileData,
+        oldfilename: isThere.resume,
+      });
+      
     }
   }
 
@@ -50,15 +94,20 @@ export class MainCrudController {
   @MessagePattern('edit-teacher')
   async edit(@Payload() body: any) {
     const { _id } = body;
-
     const isThere = await this.teacherService.findbyId(_id);
     if (!isThere)
       throw new RpcException({ statusCode: 404, message: 'Not found !!' });
 
-    const update = await this.teacherService.editbyID(_id, body);
-
+    const update = await this.teacherService
+      .editbyID(_id, body)
+      .then(() => true)
+      .catch((err) => null);
     if (update) return this.teacherService.findbyId(_id);
-    else throw new RpcException({ statusCode: 400, message: 'Bad Request' });
+    else
+      throw new RpcException({
+        statusCode: 400,
+        message: 'Bad Request !! <edit-teacher>',
+      });
   }
 
   // ////////////////////////////////////

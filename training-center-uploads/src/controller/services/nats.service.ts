@@ -27,7 +27,6 @@ export class NatsService {
   handleNatsRequest<T>(pattern: string, data: any): Observable<T> {
     return this.natsClient.send<T>(pattern, data).pipe(
       catchError((err) => {
-        console.log(err)
         const { statusCode, message } = err;
         throw new HttpException(
           message || 'Internal server error',
