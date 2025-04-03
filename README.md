@@ -44,21 +44,21 @@ sizda docker bo'lishi shart
 docker orqali ishga tushirish
 
 ```bash
-#project run
 docker compose up --build
+#project run
 ```
 # docker stop
 
 Docker Compose orqali to‘xtatish
 
 ```bash
-#project stop
 docker compose down
+#project stop
 ```
 
 yoki
 
 ```bash
-#project stop
 docker stop $(docker ps -q)
+#project stop
 ```

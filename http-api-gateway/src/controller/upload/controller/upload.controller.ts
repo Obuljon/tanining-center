@@ -16,6 +16,7 @@ import { NatsService } from '../../../nats-client/nats.service';
 import { Response } from 'express';
 import { Readable } from 'stream';
 import { catchError, lastValueFrom } from 'rxjs';
+import * as sharp from 'sharp';
 
 @Controller('api/file/')
 export class UploadController {
@@ -31,8 +32,8 @@ export class UploadController {
     @Param('_w') _w: string,
     @Param('_h') _h: string,
   ) {
-    const w = Number(_w) ? Number(_w) : 50
-    const h = Number(_h) ? Number(_h) : 50
+    const w = Number(_w) ? Math.abs(Number(_w)) : 50
+    const h = Number(_h) ? Math.abs(Number(_h)) : 50
 
     const result = await lastValueFrom(
       this.natsClient.send('read-photo-open-download', { _filename, _w: w, _h: h }).pipe(
@@ -58,11 +59,10 @@ export class UploadController {
     // Set response headers
     res.set({
       'Content-Type': 'image/png',
-      'Content-Length': buffer.length.toString(),
     });
 
     // Pipe the stream to the response
-    readableStream.pipe(res);
+    readableStream.pipe(sharp().resize(w, h)).pipe(res);
 
     return result;
   }
@@ -91,7 +91,7 @@ export class UploadController {
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${_filename}.pdf"`,
-      'Content-Length': buffer.length.toString(),
+      // 'Content-Length': buffer.length.toString(),
     });
 
     // Faylni yuborish
